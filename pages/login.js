@@ -1,11 +1,9 @@
 import { getProviders , signIn, useSession } from 'next-auth/react'
-import Image from "next/image";
-import Loader from "../components/Loader";
 import {AiOutlineInstagram} from 'react-icons/ai'
 
 function login({providers}){
 	const { data: session } = useSession();
-	if (session) return <Loader />;
+	
 	
 	return(
 																						
