@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components{
+	.button{
+		@apply h-5 w-5 cursor-pointer hover:scale-125 transition transform 
+		duration-100 ease-out;
+	}
+	.left-25{
+		@apply left-20
+	}
+	.reveal{
+		animation: wave 5s linear ease-in-out;
+		width: 0px
+
+	}
+}

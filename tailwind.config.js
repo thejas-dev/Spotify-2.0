@@ -5,7 +5,21 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      keyframes:{
+        wave:{
+          '0%': { height: '5px' },
+          '100%': { height: '1000px' }
+        },
+      },
+      animation: {
+        'reveal-bar': 'wave 1s infinte linear '
+      },
+
+    },
+
   },
-  plugins: [],
+  plugins: [
+  	 require('tailwind-scrollbar-hide')	
+  ],
 }

@@ -6,9 +6,19 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "latest",
+    "@alan-ai/alan-sdk-web": "^1.8.34",
+    "@heroicons/react": "^1.0.6",
+    "better-react-spinkit": "^2.0.4",
+    "lodash": "^4.17.21",
+    "next": "^12.2.5",
+    "next-auth": "^4.10.3",
     "react": "18.1.0",
-    "react-dom": "18.1.0"
+    "react-dom": "18.1.0",
+    "react-icons": "^4.4.0",
+    "recoil": "^0.7.5",
+    "spotify-web-api-node": "^5.0.2",
+    "tailwind-scrollbar-hide": "^1.1.7",
+    "words-to-numbers": "^1.5.1"
   },
   "devDependencies": {
     "@types/node": "17.0.35",
