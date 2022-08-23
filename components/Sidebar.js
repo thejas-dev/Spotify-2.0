@@ -54,7 +54,7 @@ function Sidebar(){
 					playArtists();
 				}
 				if(commandData.command === "playSong"){
-					if (isNan(commandData.query)){
+					if (isNaN(commandData.query)){
 						let n = wordsToNumbers(commandData.query)
 						let num = n-1
 						playSong(num)
