@@ -32,4 +32,8 @@ These are the list of commands you can use to command the Voice Assistant AI ✨
 5) Play My Favorite Artist Song --> plays your favourite artists top album
 6) Show playlist for (any artist name or movie name ex.Vikram) --> show the playlist for Vikram movie
 And Much More Commands will be available soon...
+<<<<<<< HEAD
 Don't forget to follow😀... Thank you 💖
+=======
+Don't forget to follow😀... Thank you 💖
+>>>>>>> 05d22082a75c4b1e4812bab988f8a5903950f108
