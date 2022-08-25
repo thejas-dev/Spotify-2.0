@@ -9,10 +9,11 @@ import {
 } from '@heroicons/react/outline'
 // import alanBtn from "@alan-ai/alan-sdk-web";
 import { HeartIcon } from '@heroicons/react/solid'
-import {currentTrackIdState,isPlayingState } from '../atoms/songAtom'
+import {currentTrackIdState,isPlayingState,volumeState,isLowering } from '../atoms/songAtom'
 import wordsToNumbers from 'words-to-numbers';
 import { signOut, useSession } from 'next-auth/react'
-import { useState,useEffect } from 'react';
+import { useState,useEffect,useCallback } from 'react';
+import { debounce } from 'lodash';
 import useSpotify from '../hooks/useSpotify';
 import { useRecoilState } from 'recoil'
 import { playlistIdState } from '../atoms/playlistAtom'
@@ -35,6 +36,10 @@ function Sidebar(){
 	 const [currentTrackId,setCurrentTrackId] = useRecoilState(currentTrackIdState);
 	const [playlistId,setPlaylistId] = useRecoilState(playlistIdState);
 	const [isPlaying,setIsPlaying] = useRecoilState(isPlayingState);
+	const [volume,setVolume] = useRecoilState(volumeState)
+	const [lowvolume,setLowvolume] = useState(false)
+	const [lowering,setLowering] = useRecoilState(isLowering)
+	const [text,setText] = useState('')
 	const [slidebar,setSlidebar] = useRecoilState(slideBar);
 	const [mic,setMic] = useRecoilState(micState)
 
@@ -249,6 +254,8 @@ function Sidebar(){
 
 	const {
     transcript,
+    interimTranscript,
+    resetTranscript,
     listening,
     browserSupportsSpeechRecognition,
     isMicrophoneAvailable
@@ -273,6 +280,38 @@ function Sidebar(){
 	  //   return <span>Please allow access to the microphone</span>
 	  // }
 
+
+	  const lowVolume = () =>{
+	  	if(lowering===false){
+	  		setVolume(30)
+	  		setLowering(true)
+	  	}	  	
+	  }
+	  useEffect(()=>{
+			debouncedAdjustVolume(interimTranscript);
+		},[interimTranscript])
+
+	  const debouncedAdjustVolume = useCallback(  // sets the volume of spotify api after 500ms after the volume onChange event stopped
+		debounce((text)=>{
+				setVolume(45)
+				setTimeout(()=>{
+					setVolume(80)
+					setLowering(false);
+					resetTranscript()
+				},4500)
+				setLowering(false);
+				resetTranscript()
+			},2500),
+			[]
+		);
+
+
+	  	useEffect(()=>{
+	  		lowVolume()
+	  		console.log(interimTranscript)
+	  	},[interimTranscript])
+
+	  	
 
 
 	return(
@@ -325,7 +364,7 @@ function Sidebar(){
 				<button className="flex  items-center space-x-2 
 				hover:text-white">
 					<HeartIcon className="h-5 w-5 text-blue-500"/>
-					<p>{transcript}</p>
+					<p>Liked Songs</p>
 				</button>
 				<button className="flex items-center space-x-2 
 				hover:text-white">
@@ -343,8 +382,12 @@ function Sidebar(){
 				))}
 
 				
-				
-
+			
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
 			</div>
 
 		</div>

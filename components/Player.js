@@ -1,6 +1,6 @@
 import useSpotify from '../hooks/useSpotify'
 import { useSession } from 'next-auth/react'
-import {currentTrackIdState,isPlayingState } from '../atoms/songAtom'
+import {currentTrackIdState,isPlayingState,volumeState,isLowering } from '../atoms/songAtom'
 import {useRecoilState} from 'recoil'
 import {useState,useEffect,useCallback} from 'react'
 import useSongInfo from '../hooks/useSongInfo'
@@ -30,7 +30,8 @@ function Player(){
 	const spotifyApi = useSpotify();
 	const [currentTrackId,setCurrentTrackId] = useRecoilState(currentTrackIdState);
 	const [isPlaying,setIsPlaying] = useRecoilState(isPlayingState);
-	const [volume,setVolume] = useState(50)
+	const [volume,setVolume] = useRecoilState(volumeState)
+	const [lowering,setLowering] = useRecoilState(isLowering)
 	const songInfo = useSongInfo();
 	const {
     transcript,
@@ -63,8 +64,8 @@ function Player(){
 
 	const debouncedAdjustVolume = useCallback(  // sets the volume of spotify api after 500ms after the volume onChange event stopped
 		debounce((volume)=>{
-
 			spotifyApi.setVolume(volume).catch((err)=>{})
+			setLowering(false)
 		},500), 
 		[]
 	);

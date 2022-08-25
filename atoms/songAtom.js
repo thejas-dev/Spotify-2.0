@@ -10,3 +10,13 @@ export const isPlayingState = atom({
 	key:"isPlayingState",//unique Id
 	default: false
 })
+
+export const volumeState = atom ({
+	key:"volumeState",
+	default: 50
+})
+
+export const isLowering = atom({
+	key:'isLowering',
+	default: false
+})
