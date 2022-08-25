@@ -283,7 +283,7 @@ function Sidebar(){
 
 	  const lowVolume = () =>{
 	  	if(lowering===false){
-	  		setVolume(30)
+	  		setVolume(20)
 	  		setLowering(true)
 	  	}	  	
 	  }
