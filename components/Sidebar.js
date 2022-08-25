@@ -298,7 +298,7 @@ function Sidebar(){
 					setVolume(80)
 					setLowering(false);
 					resetTranscript()
-				},4500)
+				},6500)
 				setLowering(false);
 				resetTranscript()
 			},2500),
