@@ -17,11 +17,14 @@ import useSpotify from '../hooks/useSpotify';
 import { useRecoilState } from 'recoil'
 import { playlistIdState } from '../atoms/playlistAtom'
 import { slideBar } from '../atoms/slideAtom'
+import {micState} from '../atoms/slideAtom'
+import React from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { createSpeechlySpeechRecognition } from '@speechly/speech-recognition-polyfill';
-import {micState} from '../atoms/slideAtom'
 
-
+const appId = '626e633e-73a2-4dc6-9af8-ce6d009305ae';
+const SpeechlySpeechRecognition = createSpeechlySpeechRecognition(appId);
+SpeechRecognition.applyPolyfill(SpeechlySpeechRecognition);
 
 
 function Sidebar(){
@@ -34,12 +37,6 @@ function Sidebar(){
 	const [isPlaying,setIsPlaying] = useRecoilState(isPlayingState);
 	const [slidebar,setSlidebar] = useRecoilState(slideBar);
 	const [mic,setMic] = useRecoilState(micState)
-	const {
-    transcript,
-    listening,
-    resetTranscript,
-    browserSupportsSpeechRecognition
-  } = useSpeechRecognition();
 
 	useEffect(()=>{
 		const alanBtn = require('@alan-ai/alan-sdk-web');
@@ -239,29 +236,42 @@ function Sidebar(){
 		spotifyApi.pause().catch(err=>console.log("No Tracks Are Playing"));
 	}
 
-	useEffect(()=>{
-		const appId = "626e633e-73a2-4dc6-9af8-ce6d009305ae"
-		const SpeechlySpeechRecognition = createSpeechlySpeechRecognition(appId);
-		SpeechRecognition.applyPolyfill(SpeechlySpeechRecognition);
-	})
+	// useEffect(()=>{
+	// 	const appId = "626e633e-73a2-4dc6-9af8-ce6d009305ae"
+	// 	const SpeechlySpeechRecognition = createSpeechlySpeechRecognition(appId);
+	// 	SpeechRecognition.applyPolyfill(SpeechlySpeechRecognition);
+	// })
 
 
-	const startListening = () => {
-		SpeechRecognition.startListening({ continuous: true });
-	}
+	// const startListening = () => {
+	// 	SpeechRecognition.startListening({ continuous: true });
+	// }	
 
-	useEffect(()=>{
+	const {
+    transcript,
+    listening,
+    browserSupportsSpeechRecognition,
+    isMicrophoneAvailable
+  	} = useSpeechRecognition();
+
+  	const listenContinuously = () => SpeechRecognition.startListening({ continuous: true });
+
+  	useEffect(()=>{
 		if (mic===true) {
-			startListening()
+			
+			listenContinuously()
 		}else{
 			SpeechRecognition.stopListening()
 		}
 	},[mic])
 
+	  // 	if (!browserSupportsSpeechRecognition) {
+		 //    return <span>No browser support</span>
+		 //  }
 
-
-
-
+	  // if (!isMicrophoneAvailable) {
+	  //   return <span>Please allow access to the microphone</span>
+	  // }
 
 
 
@@ -315,15 +325,15 @@ function Sidebar(){
 				<button className="flex  items-center space-x-2 
 				hover:text-white">
 					<HeartIcon className="h-5 w-5 text-blue-500"/>
-					<p>Liked Songs</p>
+					<p>{transcript}</p>
 				</button>
 				<button className="flex items-center space-x-2 
 				hover:text-white">
 					<RssIcon className="h-5 w-5 text-green-500"/>
-					<p>Your Library</p>
+					<p>microphone:{listening ? 'on' : 'off'}</p>
 				</button>
 				<hr className="border-t-[0.1px] border-gray-900 " />
-				<input value={transcript} type="textarea"/>
+				
 			{/*Playlists*/}
 				{playlists.map((playlist)=>(
 					<p
