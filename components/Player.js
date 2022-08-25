@@ -9,7 +9,7 @@ import {HeartIcon,
 	VolumeUpIcon as VolumeDownIcon,
 	} from '@heroicons/react/outline'
 
-
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
 import {
 	RewindIcon,
 	SwitchHorizontalIcon,
@@ -32,6 +32,12 @@ function Player(){
 	const [isPlaying,setIsPlaying] = useRecoilState(isPlayingState);
 	const [volume,setVolume] = useState(50)
 	const songInfo = useSongInfo();
+	const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition
+  } = useSpeechRecognition();
 
 	const fetchCurrentSong = () =>{
 		if(!songInfo){
@@ -67,10 +73,10 @@ function Player(){
 	const handlePlayPause = () =>{
 		spotifyApi.getMyCurrentPlaybackState().then((data)=>{
 			if(data.body.is_playing){
-				spotifyApi.pause();
+				spotifyApi.pause().catch(err=>console.log("No Tracks Are Playing"));
 				setIsPlaying(false);
 			}else{
-				spotifyApi.play();
+				spotifyApi.play().catch(err=>console.log("No Tracks Are Playing"));
 				setIsPlaying(true);
 			}
 		}).catch(err=>console.log("No Tracks Are Playing"))

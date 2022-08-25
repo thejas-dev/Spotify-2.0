@@ -17,8 +17,15 @@ import useSpotify from '../hooks/useSpotify';
 import { useRecoilState } from 'recoil'
 import { playlistIdState } from '../atoms/playlistAtom'
 import { slideBar } from '../atoms/slideAtom'
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import { createSpeechlySpeechRecognition } from '@speechly/speech-recognition-polyfill';
+import {micState} from '../atoms/slideAtom'
+
+
+
 
 function Sidebar(){
+	
 	const spotifyApi = useSpotify();
 	const { data: session, status } = useSession();
 	const [playlists,setPlaylists] = useState([]);
@@ -26,6 +33,13 @@ function Sidebar(){
 	const [playlistId,setPlaylistId] = useRecoilState(playlistIdState);
 	const [isPlaying,setIsPlaying] = useRecoilState(isPlayingState);
 	const [slidebar,setSlidebar] = useRecoilState(slideBar);
+	const [mic,setMic] = useRecoilState(micState)
+	const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition
+  } = useSpeechRecognition();
 
 	useEffect(()=>{
 		const alanBtn = require('@alan-ai/alan-sdk-web');
@@ -124,16 +138,28 @@ function Sidebar(){
 
 	}
 
-	// useEffect(()=>{
-	// 	// let query = 0
-	// 	// let num = query - 1
-	// 	// let num = "nine"
-	// 	// let num2 = wordsToNumbers(num)
-	// 	// playSong(num2-1)
-	// 	// searchSong('Vijay')
-	// 	// playFavorite();
-	// 	// playArtists()
-	// },[])
+	useEffect(()=>{
+		// let query = 0
+		// let num = query - 1
+		// let num = "nine"
+		// let num2 = wordsToNumbers(num)
+		// playSong(num2-1)
+		// searchSong('Vijay')
+		// playFavorite();
+		// playArtists()
+		savedTracks()
+	},[])
+
+	function savedTracks(){
+		spotifyApi.getMySavedTracks({
+			limit:10,
+			offset:0
+		}).then((data)=>{
+			console.log(data.body)
+		}).catch(err=>{
+			console.log(err)
+		})
+	}
 
 	function searchSong(name){
 		spotifyApi.searchPlaylists(name)
@@ -213,6 +239,29 @@ function Sidebar(){
 		spotifyApi.pause().catch(err=>console.log("No Tracks Are Playing"));
 	}
 
+	useEffect(()=>{
+		const appId = "626e633e-73a2-4dc6-9af8-ce6d009305ae"
+		const SpeechlySpeechRecognition = createSpeechlySpeechRecognition(appId);
+		SpeechRecognition.applyPolyfill(SpeechlySpeechRecognition);
+	})
+
+
+	const startListening = () => {
+		SpeechRecognition.startListening({ continuous: true });
+	}
+
+	useEffect(()=>{
+		if (mic===true) {
+			startListening()
+		}else{
+			SpeechRecognition.stopListening()
+		}
+	},[mic])
+
+
+
+
+
 
 
 
@@ -274,7 +323,7 @@ function Sidebar(){
 					<p>Your Library</p>
 				</button>
 				<hr className="border-t-[0.1px] border-gray-900 " />
-			
+				<input value={transcript} type="textarea"/>
 			{/*Playlists*/}
 				{playlists.map((playlist)=>(
 					<p
