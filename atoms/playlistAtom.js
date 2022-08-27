@@ -14,3 +14,13 @@ export const playlistState = atom({
 	key:'playlistState',
 	default: null,
 })
+
+export const categoriesState = atom ({
+	key:'categoriesState',
+	default:'null',
+})
+
+export const saveState = atom({
+	key:'saveState',
+	default: 'null'
+})

@@ -15,11 +15,15 @@ module.exports = {
       animation: {
         'reveal-bar': 'wave 1s infinte linear '
       },
+      screens:{
+        'sm': {'max': '450px'},
+      }
 
     },
 
   },
   plugins: [
-  	 require('tailwind-scrollbar-hide')	
+  	 require('tailwind-scrollbar-hide'),	
+     require('tailwindcss-textshadow')
   ],
 }

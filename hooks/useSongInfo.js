@@ -1,7 +1,7 @@
 import {useState,useEffect} from 'react'
 import useSpotify from './useSpotify'
 import {useRecoilState} from 'recoil'
-import {currentTrackIdState} from '../atoms/songAtom'
+import {currentTrackIdState,repeatState} from '../atoms/songAtom'
 
 
 function useSongInfo(){
@@ -9,6 +9,7 @@ function useSongInfo(){
     const spotifyApi = useSpotify();
     const [currentIdTrack,setCurrentIdTrack] = useRecoilState(currentTrackIdState)
     const [songInfo,setSongInfo] = useState(null)
+    const [repeat,setRepeat] = useRecoilState(repeatState)
 
     useEffect(()=>{
     	const fetchSongInfo = async () =>{
@@ -23,7 +24,7 @@ function useSongInfo(){
     					}
     				}
     			).then(res=> res.json());
-
+                setRepeat(false)
     			setSongInfo(trackInfo);
     		}
     	}

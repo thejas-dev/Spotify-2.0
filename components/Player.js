@@ -1,6 +1,6 @@
 import useSpotify from '../hooks/useSpotify'
 import { useSession } from 'next-auth/react'
-import {currentTrackIdState,isPlayingState,volumeState,isLowering } from '../atoms/songAtom'
+import {currentTrackIdState,isPlayingState,volumeState,isLowering,repeatState } from '../atoms/songAtom'
 import {useRecoilState} from 'recoil'
 import {useState,useEffect,useCallback} from 'react'
 import useSongInfo from '../hooks/useSongInfo'
@@ -19,7 +19,10 @@ import {
 	ReplyIcon,
 	VolumeUpIcon,
 } from '@heroicons/react/solid'
-
+import {
+	TbRepeat,
+	TbRepeatOnce
+}from 'react-icons/tb'
 
 
 
@@ -32,6 +35,7 @@ function Player(){
 	const [isPlaying,setIsPlaying] = useRecoilState(isPlayingState);
 	const [volume,setVolume] = useRecoilState(volumeState)
 	const [lowering,setLowering] = useRecoilState(isLowering)
+	const [repeat,setRepeat] = useRecoilState(repeatState)
 	const songInfo = useSongInfo();
 	const {
     transcript,
@@ -53,6 +57,18 @@ function Player(){
 
 		}
 	}
+
+	const repeatSong = () =>{
+		if(repeat===false){
+		spotifyApi.setRepeat('track').then((data)=>{
+			setRepeat(true)
+		}).catch(err=>console.log(err))
+	}else{
+		spotifyApi.setRepeat('off').then((data)=>{
+			setRepeat(false)
+		}).catch(err=>console.log(err))
+	}
+}
 
 
 
@@ -101,7 +117,7 @@ function Player(){
 			<div className="flex items-center space-x-4 ">
 				<img 
 				className="hidden md:inline h-10 w-10"  
-				src={songInfo?.album?.images?.[0]?.url} 
+				src={songInfo?.album?.images?.[0]?.url ? songInfo?.album?.images?.[0]?.url : "https://upload.wikimedia.org/wikipedia/commons/7/74/Spotify_App_Logo.svg"  } 
 				alt=""/>
 				<div>
 				<h3>{songInfo?.name}</h3>
@@ -125,7 +141,8 @@ function Player(){
 				onClick={()=> spotifyApi.skipToNext().catch(err=>console.log("No Tracks Are Playing"))} 
 				//--- not working(under test)
 				/>
-				<ReplyIcon className="button"/>
+				{repeat ? <TbRepeatOnce onClick={repeatSong} className="button text-green-500"/> : <TbRepeat onClick={repeatSong} className="button"/>}
+				
 
 
 			</div>

@@ -20,3 +20,8 @@ export const isLowering = atom({
 	key:'isLowering',
 	default: false
 })
+
+export const repeatState = atom({
+	key:'repeatState',
+	default:false
+})

@@ -7,8 +7,13 @@ import {
 	MenuAlt2Icon,
 	XCircleIcon
 } from '@heroicons/react/outline'
+import {BsMic} from 'react-icons/bs'
 // import alanBtn from "@alan-ai/alan-sdk-web";
 import { HeartIcon } from '@heroicons/react/solid'
+import Center from './Center'
+import Home from './Home'
+import Search from './Search'
+import Liked from './Liked'
 import {currentTrackIdState,isPlayingState,volumeState,isLowering } from '../atoms/songAtom'
 import wordsToNumbers from 'words-to-numbers';
 import { signOut, useSession } from 'next-auth/react'
@@ -16,12 +21,13 @@ import { useState,useEffect,useCallback } from 'react';
 import { debounce } from 'lodash';
 import useSpotify from '../hooks/useSpotify';
 import { useRecoilState } from 'recoil'
-import { playlistIdState } from '../atoms/playlistAtom'
-import { slideBar } from '../atoms/slideAtom'
-import {micState} from '../atoms/slideAtom'
+import { playlistIdState, saveState } from '../atoms/playlistAtom'
+import { slideBar,micState } from '../atoms/slideAtom'
+import {typeState} from '../atoms/categoryAtom'
 import React from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { createSpeechlySpeechRecognition } from '@speechly/speech-recognition-polyfill';
+
 
 const appId = '626e633e-73a2-4dc6-9af8-ce6d009305ae';
 const SpeechlySpeechRecognition = createSpeechlySpeechRecognition(appId);
@@ -35,6 +41,7 @@ function Sidebar(){
 	const [playlists,setPlaylists] = useState([]);
 	 const [currentTrackId,setCurrentTrackId] = useRecoilState(currentTrackIdState);
 	const [playlistId,setPlaylistId] = useRecoilState(playlistIdState);
+	const [saved,setSaved] = useRecoilState(saveState);
 	const [isPlaying,setIsPlaying] = useRecoilState(isPlayingState);
 	const [volume,setVolume] = useRecoilState(volumeState)
 	const [lowvolume,setLowvolume] = useState(false)
@@ -42,6 +49,12 @@ function Sidebar(){
 	const [text,setText] = useState('')
 	const [slidebar,setSlidebar] = useRecoilState(slideBar);
 	const [mic,setMic] = useRecoilState(micState)
+	const [type,setType] = useRecoilState(typeState)
+
+	useEffect(()=>{
+		setType(<Home/>)
+	},[])
+
 
 	useEffect(()=>{
 		const alanBtn = require('@alan-ai/alan-sdk-web');
@@ -95,7 +108,7 @@ function Sidebar(){
 			spotifyApi.getUserPlaylists().then((data)=>{
 				setPlaylists(data.body.items)
 				// own
-				setPlaylistId(data.body.items[0].id)
+				// setPlaylistId(data.body.items[0].id)
 				// own
 			}).catch(err=>{});
 		};
@@ -157,9 +170,9 @@ function Sidebar(){
 			limit:10,
 			offset:0
 		}).then((data)=>{
-			console.log(data.body)
+			setSaved(data.body)
 		}).catch(err=>{
-			console.log(err)
+			// console.log(err)
 		})
 	}
 
@@ -307,8 +320,7 @@ function Sidebar(){
 
 
 	  	useEffect(()=>{
-	  		lowVolume()
-	  		console.log(interimTranscript)
+	  		lowVolume();
 	  	},[interimTranscript])
 
 	  	
@@ -324,7 +336,7 @@ function Sidebar(){
 		</button>:<MenuAlt2Icon 
 		onClick={revealSearch}
 		id="toggleIcon"
-		className="h-7 w-7 text-white fixed md:hidden button  shadow rounded-full" 
+		className="z-50 h-7 w-7 text-white fixed md:hidden button shadow rounded-full" 
 		/>
 
 		}
@@ -333,18 +345,22 @@ function Sidebar(){
 		<div 
 		id = "slidebar"
 		className="text-gray-500 p-5 hidden text-xs lg:text-sm border-r border-gray-900
-		overflow-y-scroll scrollbar-hide h-screen sm:max-w-[12rem] lg:max-w-[15rem]  md:inline-flex pb-36 ">
+		overflow-y-scroll scrollbar-hide h-screen sm:max-w-[12rem] lg:max-w-[12rem] xl:max-w-[12rem]  md:inline-flex pb-36 ">
 		 	
 			<div className="space-y-4" >
 				<img className="w-[100px]" src="https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_RGB_White.png" alt=""/>
 				
 				<button className="flex items-center space-x-2 
-				hover:text-white ">
+				hover:text-white" onClick={()=>setType('category')} 
+				onClick={()=>{setType(<Home/>)}}
+				>
 					<HomeIcon className="h-5 w-5 mt-2"/>
 					<p className="mt-2" >Home</p>
 				</button>
 				<button className="flex items-center space-x-2 
-				hover:text-white">
+				hover:text-white"
+				onClick={()=>{setType(<Search/>)}}
+				>
 					<SearchIcon 
 					className="h-5 w-5"/>
 					<p>Search</p>
@@ -362,13 +378,15 @@ function Sidebar(){
 					<p>Create Playlist</p>
 				</button>
 				<button className="flex  items-center space-x-2 
-				hover:text-white">
+				hover:text-white"
+				onClick={()=>{setType(<Liked/>)}}
+				>
 					<HeartIcon className="h-5 w-5 text-blue-500"/>
 					<p>Liked Songs</p>
 				</button>
 				<button className="flex items-center space-x-2 
 				hover:text-white">
-					<RssIcon className="h-5 w-5 text-green-500"/>
+					<BsMic className="h-5 w-5 text-green-500"/>
 					<p>microphone:{listening ? 'on' : 'off'}</p>
 				</button>
 				<hr className="border-t-[0.1px] border-gray-900 " />
@@ -376,18 +394,16 @@ function Sidebar(){
 			{/*Playlists*/}
 				{playlists.map((playlist)=>(
 					<p
-					onClick={()=>setPlaylistId(playlist.id)}
+					onClick={()=>{
+						setType(<Center/>)
+						setPlaylistId(playlist.id)
+					}}
 					key = {playlist.id}
-					className="cursor-pointer hover:text-white ">{playlist.name}</p>
+					className="cursor-pointer hover:text-white"
+					>{playlist.name}</p>
 				))}
 
-				
-			
-				<br/>
-				<br/>
-				<br/>
-				<br/>
-				<br/>
+				<br/><br/><br/><br/>
 			</div>
 
 		</div>

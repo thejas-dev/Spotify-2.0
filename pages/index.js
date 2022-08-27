@@ -1,12 +1,15 @@
 import Loader from '../components/Loader'
 import { useRouter } from "next/router";
 import Sidebar from '../components/Sidebar'
-import Center from '../components/Center'
 import Player from '../components/Player'
+import Center from '../components/Center'
 import {getSession,useSession} from 'next-auth/react'
+import {typeState} from '../atoms/categoryAtom'
+import { useRecoilState } from 'recoil'
 
 function NextPage(){
    const { status, data: session } = useSession();
+     const [type,setType] = useRecoilState(typeState)
 
    if (status === "loading") {
     return <Loader />;
@@ -19,7 +22,8 @@ function NextPage(){
 
       <main className="flex relative" >
         <Sidebar  />
-        <Center/>
+        {type}
+       
       {/*Center*/}
       
       </main>     

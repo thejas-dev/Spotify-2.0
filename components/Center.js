@@ -76,14 +76,14 @@ function Center(){
 			<section className={`flex items-end space-x-7
 				bg-gradient-to-b to-black ${color} h-80
 				text-white p-8`} >
-				<img className="h-44 w-44 shadow-2xl transition-all duration-500 ease-in-out" src={playlist?.images ? playlist?.images[0]?.url : session?.user?.image } alt=""/>
+				<img className="h-44 w-44 shadow-2xl transition duration-500 ease-in-out" src={playlist?.images ? playlist?.images[0]?.url : session?.user?.image } alt=""/>
 				<div>
 					{playlist?.images ? 
 						<p>
 							PLAYLISTS
 						</p> :
 						<p>
-							SONGS
+							LOADING
 						</p>
 					}
 					<h1 className="text-2xl md:text-3xl xl:text-5xl font-bold"> 

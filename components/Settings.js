@@ -48,7 +48,7 @@ function Settings({func,reveal}){
 return(
 
 	<div>
-		<div id="Settings" className="flex absolute w-screen bottom-[120vh] transition ease-in-out delay-300 h-screen bg-opacity-60 bg-slate-600 text-black">
+		<div id="Settings" className="flex z-50 absolute w-screen bottom-[120vh] transition ease-in-out delay-300 h-screen bg-opacity-60 bg-slate-600 text-black">
 			<div classNam="flex items-center">	 
 				<button 
 				className="rounded-full fixed hover:shadow-green-500 shadow-white mt-6 hover:scale-125 hover:transition hover:ease-in-out mt-2 text-white shadow ml-5 border-r hover:border-green-500 border-gray-100 w-[50px]" 
