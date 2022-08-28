@@ -157,7 +157,7 @@ function Library(argument) {
 
 			<div className="px-8 flex flex-col space-y-1 pb-28 text-white" >
 				<div class="rounded overflow-hidden shadow-lg">
-				  <img class="rounded-full mx-auto shadow-[0px_0px_50px_0px] mt-10 shadow-indigo-600 " src={session?.user?.image} alt="Sunset in the mountains"/>
+				  <img class="rounded-full mx-auto shadow-[0px_0px_30px_0px] md:shadow-[0px_0px_50px_0px] mt-10 md:shadow-indigo-600 shadow-indigo-600 " src={session?.user?.image} alt="Sunset in the mountains"/>
 				  <div class="px-6 mt-8 py-4">
 				  	<div>
 				   	 	<div class="font-bold text-2xl text-center mb-2">{info?.product.charAt(0).toUpperCase() + info?.product.slice(1)} Account</div>

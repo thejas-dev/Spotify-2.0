@@ -8,6 +8,7 @@ import { useRecoilState } from 'recoil'
 import Settings from './Settings'
 import useSpotify from '../hooks/useSpotify';
 import Songs from './Songs'
+import { slideBar } from '../atoms/slideAtom'
 
 const colors =[
 	"from-indigo-500",
@@ -25,6 +26,7 @@ const colors =[
 function Center(){
 	const {data: session} = useSession();
 	const [color,setColor] = useState(null);
+	const [slidebar,setSlidebar] = useRecoilState(slideBar);
 	const [playlistId,setPlaylistId] = useRecoilState(playlistIdState)
 	const [playlist,setPlaylist] = useRecoilState(playlistState)
 	const spotifyApi = useSpotify()
@@ -77,7 +79,7 @@ function Center(){
 				bg-gradient-to-b to-black ${color} h-80
 				text-white p-8`} >
 				<img className="h-44 w-44 shadow-2xl transition duration-500 ease-in-out" src={playlist?.images ? playlist?.images[0]?.url : session?.user?.image } alt=""/>
-				<div>
+				<div className={`${slidebar ? "hidden" : "" }`} >
 					{playlist?.images ? 
 						<p>
 							PLAYLISTS
@@ -92,7 +94,7 @@ function Center(){
 				</div>
 			</section>
 
-			<div>
+			<div className="" >
 				<Songs/>
 			</div>
 

@@ -12,7 +12,7 @@ function Ssongs(){
 	return(
 
 		<div>
-			<div className="px-8 flex flex-col space-y-1 pb-8 text-white" >
+			<div className="px-8 flex flex-col space-y-1 pb-8 text-white overflow-y-hidden " >
 				{searchResult?.map((track, i) => (
 					<Ssong track={track} order={i} />
 

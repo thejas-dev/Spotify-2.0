@@ -334,7 +334,7 @@ function Sidebar(){
 	return(
 	<div>	
 		{slidebar ? <button 
-		className=" rounded-full mt-2 button text-white shadow ml-[7rem] md:hidden border-r border-gray-100 w-[50px]" 
+		className=" rounded-full mt-2 button text-white shadow ml-[6rem] md:hidden border-r border-gray-100 w-[50px]" 
 		onClick={hideSearch}
 		>
 		close
