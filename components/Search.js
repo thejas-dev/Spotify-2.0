@@ -50,7 +50,7 @@ function Search(argument) {
 	}, [search])
 	
 	useEffect(()=>{
-		console.log("ran")
+	
 		if(artist){
 			spotifyApi.searchTracks('artist:'+search,{limit:limit,country:'IN'}).then((data)=>{
 			setSearchResult(data.body.tracks.items)
@@ -58,7 +58,7 @@ function Search(argument) {
 		}else{
 			spotifyApi.searchTracks(search,{limit:limit,country:'IN'}).then((data)=>{
 			setSearchResult(data.body.tracks.items)
-			}).catch(err=>{console.log(err)})	
+			}).catch(err=>{})	
 		}
 	},[search,limit,artist])
 

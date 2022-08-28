@@ -14,14 +14,15 @@ import Center from './Center'
 import Home from './Home'
 import Search from './Search'
 import Liked from './Liked'
-import {currentTrackIdState,isPlayingState,volumeState,isLowering } from '../atoms/songAtom'
+import Library from './Library'
+import {currentTrackIdState,isPlayingState,volumeState,isLowering,likedState } from '../atoms/songAtom'
 import wordsToNumbers from 'words-to-numbers';
 import { signOut, useSession } from 'next-auth/react'
 import { useState,useEffect,useCallback } from 'react';
 import { debounce } from 'lodash';
 import useSpotify from '../hooks/useSpotify';
 import { useRecoilState } from 'recoil'
-import { playlistIdState, saveState } from '../atoms/playlistAtom'
+import { playlistIdState, saveState, playlistsState } from '../atoms/playlistAtom'
 import { slideBar,micState } from '../atoms/slideAtom'
 import {typeState} from '../atoms/categoryAtom'
 import React from 'react';
@@ -38,7 +39,7 @@ function Sidebar(){
 	
 	const spotifyApi = useSpotify();
 	const { data: session, status } = useSession();
-	const [playlists,setPlaylists] = useState([]);
+	const [playlists,setPlaylists] = useRecoilState(playlistsState);
 	 const [currentTrackId,setCurrentTrackId] = useRecoilState(currentTrackIdState);
 	const [playlistId,setPlaylistId] = useRecoilState(playlistIdState);
 	const [saved,setSaved] = useRecoilState(saveState);
@@ -50,6 +51,7 @@ function Sidebar(){
 	const [slidebar,setSlidebar] = useRecoilState(slideBar);
 	const [mic,setMic] = useRecoilState(micState)
 	const [type,setType] = useRecoilState(typeState)
+	const [liked,setLiked] = useRecoilState(likedState)
 
 	useEffect(()=>{
 		setType(<Home/>)
@@ -163,16 +165,18 @@ function Sidebar(){
 		// playFavorite();
 		// playArtists()
 		savedTracks()
-	},[])
+	},[liked])
+
+
 
 	function savedTracks(){
 		spotifyApi.getMySavedTracks({
-			limit:10,
+			limit:50,
 			offset:0
 		}).then((data)=>{
 			setSaved(data.body)
 		}).catch(err=>{
-			// console.log(err)
+			console.log(err)
 		})
 	}
 
@@ -183,6 +187,7 @@ function Sidebar(){
     	// country: 'IN'
 	    .then((data)=>{
 	    	setPlaylistId(data.body.playlists.items[0].id)
+	    	setType(<Center/>)
 	    },function(err){
 	    	console.log("something went wrong",err)
 	    })
@@ -329,7 +334,7 @@ function Sidebar(){
 	return(
 	<div>	
 		{slidebar ? <button 
-		className=" rounded-full mt-2 button text-white shadow ml-12 md:hidden border-r border-gray-100 w-[50px]" 
+		className=" rounded-full mt-2 button text-white shadow ml-[10rem] md:hidden border-r border-gray-100 w-[50px]" 
 		onClick={hideSearch}
 		>
 		close
@@ -366,7 +371,9 @@ function Sidebar(){
 					<p>Search</p>
 				</button>
 				<button className="flex items-center space-x-2 
-				hover:text-white">
+				hover:text-white"
+				onClick={()=>{setType(<Library/>)}}
+				>
 					<LibraryIcon className="h-5 w-5"/>
 					<p>Your Library</p>
 				</button>

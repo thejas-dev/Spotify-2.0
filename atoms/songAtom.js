@@ -25,3 +25,8 @@ export const repeatState = atom({
 	key:'repeatState',
 	default:false
 })
+
+export const likedState = atom({
+	key:'likedState',
+	default:false
+})

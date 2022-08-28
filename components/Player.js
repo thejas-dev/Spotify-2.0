@@ -1,6 +1,6 @@
 import useSpotify from '../hooks/useSpotify'
 import { useSession } from 'next-auth/react'
-import {currentTrackIdState,isPlayingState,volumeState,isLowering,repeatState } from '../atoms/songAtom'
+import {currentTrackIdState,isPlayingState,volumeState,isLowering,repeatState,likedState } from '../atoms/songAtom'
 import {useRecoilState} from 'recoil'
 import {useState,useEffect,useCallback} from 'react'
 import useSongInfo from '../hooks/useSongInfo'
@@ -23,6 +23,8 @@ import {
 	TbRepeat,
 	TbRepeatOnce
 }from 'react-icons/tb'
+import { FiHeart }from 'react-icons/fi'
+import { FaHeart } from 'react-icons/fa'
 
 
 
@@ -36,6 +38,7 @@ function Player(){
 	const [volume,setVolume] = useRecoilState(volumeState)
 	const [lowering,setLowering] = useRecoilState(isLowering)
 	const [repeat,setRepeat] = useRecoilState(repeatState)
+	const [liked,setLiked] = useRecoilState(likedState)
 	const songInfo = useSongInfo();
 	const {
     transcript,
@@ -47,8 +50,7 @@ function Player(){
 	const fetchCurrentSong = () =>{
 		if(!songInfo){
 			spotifyApi.getMyCurrentPlayingTrack().then(data=>{
-				setCurrentTrackId(data.body?.item?.id);
-		 
+				setCurrentTrackId(data?.body?.item?.id);
 			spotifyApi.getMyCurrentPlaybackState().then(data=>{
 				setIsPlaying(data.body?.is_playing);
 			})
@@ -69,8 +71,31 @@ function Player(){
 		}).catch(err=>console.log(err))
 	}
 }
+	useEffect(()=>{
+		if(currentTrackId){
+			spotifyApi.containsMySavedTracks([currentTrackId]).then((data)=>{
+				let result = data.body[0]
+				if(result===true){
+					setLiked(true)
+				}else{
+					setLiked(false)
+				}
+			}).catch(err=>console.log(err))
+		}
+	},[currentTrackId])
 
-
+	// setInterval(()=>{
+	// 	if(currentTrackId){	
+	// 		spotifyApi.containsMySavedTracks([currentTrackId]).then((data)=>{
+	// 			let result3 = data.body[0]
+	// 			if(result3===true){
+	// 				setLiked(true)
+	// 			}else{
+	// 				setLiked(false)
+	// 			}
+	// 		}).catch(err=>console.log(err))
+	// 	}
+	// },5000)
 
 	useEffect(()=>{
 		if(volume > 0 && volume < 100 ){
@@ -85,6 +110,26 @@ function Player(){
 		},500), 
 		[]
 	);
+
+
+	const handleLiked = () =>{
+		spotifyApi.containsMySavedTracks([currentTrackId]).then((data)=>{
+			let result2 = data.body[0]
+			if(result2===true){
+				spotifyApi.removeFromMySavedTracks([currentTrackId]).then((data)=>{
+					setLiked(false)
+				}).catch((err)=>{
+					
+				})
+			}else{
+				spotifyApi.addToMySavedTracks([currentTrackId]).then((data)=>{
+					setLiked(true)
+				}).catch((err)=>{
+					
+				})
+			}
+		})
+	}
 
 
 	const handlePlayPause = () =>{
@@ -126,7 +171,11 @@ function Player(){
 			</div>
 			{/*center*/}
 			<div className="flex items-center justify-evenly" >
-				<SwitchHorizontalIcon className="button"/>
+			{liked ?   <FaHeart className="button text-green-500" 
+			onClick={()=>handleLiked()}
+			 /> : <FiHeart className="button"
+			onClick={()=>handleLiked()}
+			 />  }
 				<RewindIcon className="button"
 				onClick={()=> spotifyApi.skipToPrevious().catch(err=>console.log("No Tracks Are Playing"))} 
 				//--- not working(under test)
